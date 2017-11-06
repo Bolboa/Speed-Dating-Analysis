@@ -21,62 +21,65 @@ def preprocess(cols_del):
     # Convert column to all caps so all the data will have the same format.
     data['field'] = data['field'].str.upper()
 
+    data['field'] = data['field'].str.replace(" ", "")
+
     # Convert string values to an integer equivalent if the string contains any keywords.
     searchfor = ['LAW']
     data.loc[data['field'].str.contains('|'.join(searchfor)), 'field'] = 1
 
-    searchfor = ['MATH']
+    searchfor = ['MATH', 'STAT']
     data.loc[data['field'].str.contains('|'.join(searchfor), na=False), 'field'] = 2
 
-    searchfor = ['PSYCHOLOG', 'SOCIAL SCIENCE']
+    searchfor = ['PSYCHOLOG', 'SOCIALSCIENCE', 'ANTHROPOLOGY', 'HUMAN', 'PATHOLOGY', 'EPIDEM']
     data.loc[data['field'].str.contains('|'.join(searchfor), na=False), 'field'] = 3
 
-    searchfor = ['BIO TECH', 'PHARM', 'MED']   
+    searchfor = ['BIOTECH', 'PHARM', 'MED', 'NEURO']   
     data.loc[data['field'].str.contains('|'.join(searchfor), na=False), 'field'] = 4
 
-    searchfor = ['ENGINEER']
+    searchfor = ['ENGINEER', 'COMPUTERSCIENCE', 'ENGG']
     data.loc[data['field'].str.contains('|'.join(searchfor), na=False), 'field'] = 5
 
     searchfor = ['ENGLISH', 'LITERATURE', 'WRITING', 'CREATIVE', 'JOURNAL']
     data.loc[data['field'].str.contains('|'.join(searchfor), na=False), 'field'] = 6
 
-    searchfor = ['HIST', 'RELIGION', 'PHIL']
+    searchfor = ['HIST', 'RELIGION', 'PHIL', 'CLASSICS']
     data.loc[data['field'].str.contains('|'.join(searchfor), na=False), 'field'] = 7
 
-    searchfor = ['BUSINESS', 'ECON', 'FINANCE']
+    searchfor = ['BUSINESS', 'ECON', 'FINANCE', 'MBA', 'MARKETING', 'FINANACE', 'MONEY']
     data.loc[data['field'].str.contains('|'.join(searchfor), na=False), 'field'] = 8
 
     searchfor = ['EDUCATION', 'ACADEMIA']
     data.loc[data['field'].str.contains('|'.join(searchfor), na=False), 'field'] = 9
 
-    searchfor = ['BIO', 'CHEM', 'PHYSIC']
+    searchfor = ['BIO', 'CHEM', 'PHYSIC', 'GENETICS', 'ECOLOGY']
     data.loc[data['field'].str.contains('|'.join(searchfor), na=False), 'field'] = 10
 
-    searchfor = ['SOCIAL WORK']
+    searchfor = ['SOCIALWORK', 'SOCIALSTUDIES', 'SOCIOLOGY']
     data.loc[data['field'].str.contains('|'.join(searchfor), na=False), 'field'] = 11
 
     searchfor = ['UNDER', 'UNDECIDED']
     data.loc[data['field'].str.contains('|'.join(searchfor), na=False), 'field'] = 12
 
-    searchfor = ['POLI', 'INTERNAT']
+    searchfor = ['POLI', 'NATIONAL']
     data.loc[data['field'].str.contains('|'.join(searchfor), na=False), 'field'] = 13
 
     searchfor = ['FILM']
     data.loc[data['field'].str.contains('|'.join(searchfor), na=False), 'field'] = 14
 
-    searchfor = ['ARTS']
+    searchfor = ['ARTS', 'ADMINISTRATION', 'ACTING', 'MFA', 'THEATER', 'THEATRE']
     data.loc[data['field'].str.contains('|'.join(searchfor), na=False), 'field'] = 15
 
-    searchfor = ['LANGUAGES']
+    searchfor = ['LANGUAGES', 'FRENCH']
     data.loc[data['field'].str.contains('|'.join(searchfor), na=False), 'field'] = 16
 
     searchfor = ['ARCHITECT']
     data.loc[data['field'].str.contains('|'.join(searchfor), na=False), 'field'] = 17
 
-    searchfor = ['OTHER']
-    data.loc[data['field'].str.contains('|'.join(searchfor), na=False), 'field'] = 18
+    # Most columns are now integer values,
+    # if there are any values that were not converted then we label those as Other = 18.
+    totalsearch = [i for i in range(1,18)]
+    data.loc[~data['field'].isin(totalsearch), 'field'] = 18
 
-    print(data)
 
 def main(_):
     delete = [1]
