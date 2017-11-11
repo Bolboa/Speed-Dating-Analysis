@@ -3,7 +3,7 @@ import numpy as np
 import tflearn
 import pandas as pd
 
-def preprocess(cols_del):
+def preprocess():
 
     # Read CSV Speed Dating Data using Pandas
     data = pd.read_csv('/home/eric/Documents/Speed Dating Data.csv')
@@ -80,9 +80,36 @@ def preprocess(cols_del):
     totalsearch = [i for i in range(1,18)]
     data.loc[~data['field'].isin(totalsearch), 'field'] = 18
 
+    return data
+
+def deep_net(label, data):
+
+    # Target label used for training
+    labels = np.array(data[label], dtype=np.float32)
+    
+    # Reshape target label from (6605,) to (6605, 1)
+    labels = np.reshape(labels, (-1, 1))
+   
+    # Data for training minus the target label.
+    data = np.array(data.drop(label, axis=1), dtype=np.float32)
+    
+    # Deep Neural Network.    
+    net = tflearn.input_data(shape=[None, 32])
+    net = tflearn.fully_connected(net, 32)
+    net = tflearn.fully_connected(net, 32)
+    net = tflearn.fully_connected(net, 1, activation='softmax')
+    net = tflearn.regression(net)
+
+    # Define model.
+    model = tflearn.DNN(net)
+    model.fit(data, labels, n_epoch=10, batch_size=16, show_metric=True)
+    
 
 def main(_):
-    delete = [1]
-    preprocess(delete)
+    
+    data = preprocess()
+    label = "age"
+    deep_net(label, data)
+    
 if __name__ == '__main__':
     tf.app.run()
