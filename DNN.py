@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import tflearn
 import pandas as pd
+import matplotlib.pyplot as plt
 
 def preprocess():
 
@@ -83,16 +84,19 @@ def preprocess():
     return data
 
 def deep_net(label, data):
+    print(data)
 
     # Target label used for training
     labels = np.array(data[label], dtype=np.float32)
     
     # Reshape target label from (6605,) to (6605, 1)
     labels = np.reshape(labels, (-1, 1))
-   
+    
     # Data for training minus the target label.
     data = np.array(data.drop(label, axis=1), dtype=np.float32)
-    
+
+    print(data.shape)
+    print(labels.shape)
     # Deep Neural Network.    
     net = tflearn.input_data(shape=[None, 32])
     net = tflearn.fully_connected(net, 32)
@@ -105,11 +109,30 @@ def deep_net(label, data):
     model.fit(data, labels, n_epoch=10, batch_size=16, show_metric=True)
     
 
+def analyze_data(data):
+
+    # Display the mean age.
+    print(data["age"].mean())
+
+    # Display match rate based on the age of the participant and their gender.
+    match_rate_gender = data.groupby(['age', 'gender']).mean()
+
+    # Plot match rate based on age of particpant and their gender.
+    match_rate_gender['match'].plot.bar()
+    plt.show()
+
+    # Display the match rate when age of participant, age of partner, and gender are considered.
+    match_rate_age = data.groupby(['age', 'gender', 'age_o']).mean()
+    print(match_rate_age['match'])
+
+
+
 def main(_):
     
     data = preprocess()
     label = "age"
-    deep_net(label, data)
+    #deep_net(label, data)
+    analyze_data(data)
     
 if __name__ == '__main__':
     tf.app.run()
