@@ -3,6 +3,7 @@ import numpy as np
 import tflearn
 import pandas as pd
 import matplotlib.pyplot as plt
+import sklearn.ensemble as ske
 from sklearn import datasets, svm, model_selection, tree, metrics
 
 def example():
@@ -173,12 +174,13 @@ def decision_tree(data):
     # Use the test data to calculate the score.
     print(clf_tree.score(X_test, y_test))
 
+    # Implement the decision tree again using Cross Validation.
     unique_permutations_cross_val(X, y, clf_tree)
 
 
 def unique_permutations_cross_val(X, y, model):
 
-    # Split data 20/80 to be used in a K-Fold Cross Validation.
+    # Split data 20/80 to be used in a K-Fold Cross Validation with unique permutations.
     shuffle_validator = model_selection.ShuffleSplit(n_splits=10, test_size=0.2, random_state=0)
     
     # Calculate the score of the model after Cross Validation has been applied to it. 
@@ -194,6 +196,9 @@ def random_forest(data):
     X = data.drop(['match'], axis=1).values
     y = data['match'].values
 
+    clf_tree = ske.RandomForestClassifier(n_estimators=50)
+    unique_permutations_cross_val(X, y, clf_tree)
+
 
 def main(_):
 
@@ -206,8 +211,8 @@ def main(_):
     #label = "age"
     #deep_net(label, processed_data)
     #analyze_data(processed_data)
-    decision_tree(processed_data)
-    #random_forest(processed_data)
+    #decision_tree(processed_data)
+    random_forest(processed_data)
     #example()
     
 if __name__ == '__main__':
