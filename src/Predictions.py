@@ -93,77 +93,26 @@ def main(_):
     # Set target column.
     target = "match"
 
+    header_list = list(data.columns.values)
 
-    gender      = 0
-    condtn      = 1
-    order       = 5
-    partner     = 1
-    match       = 1
-    int_corr    = 0.30
-    samerace    = 1
-    age_o       = 21
-    race_o      = 1
-    pf_o_att    = 20
-    pf_o_sin    = 20    
-    pf_o_int    = 20
-    pf_o_fun    = 20
-    pf_o_amb    = 20
-    pf_o_sha    = 20
-    attr_o      = 5
-    sinc_o      = 5
-    intel_o     = 5 
-    fun_o       = 5
-    amb_o       = 5
-    shar_o      = 5
-    like_o      = 5
-    prob_o      = 5
-    met_o       = 5
-    age         = 21
-    field_cd    = 3
-    race        = 1
-    imprace     = 4
-    imprelig    = 4
-    career_c    = 2
+    mean_values = [data[header].mean() for header in header_list]
 
+    header_dict = dict(zip(header_list, mean_values))
+
+    del header_dict[target]
+
+    header_dict['samerace'] = 1
+    header_dict['imprace'] = 9
+
+    extract_values = list(header_dict.values())
 
     #analyze_data(data)
     #decision_tre = decision_tree(target, data)
     rnd_forest = random_forest(target, data)
-    #gradient_boosting(target, data)
 
-    print(rnd_forest.predict([[
-        gender, 
-        condtn,
-        order,
-        partner,
-        match,
-        int_corr,
-        samerace,
-        age_o,
-        race_o,
-        pf_o_att,
-        pf_o_sin,
-        pf_o_int,
-        pf_o_fun,
-        pf_o_amb,
-        pf_o_sha,
-        attr_o,
-        sinc_o,
-        intel_o,
-        fun_o,
-        amb_o,
-        shar_o,
-        like_o,
-        prob_o,
-        met_o,
-        age,
-        field_cd,
-        race,
-        imprace,
-        imprelig,
-        career_c
-    ]]))
-    
+    predictions = rnd_forest.predict([extract_values])
+    print(predictions)
+    #gradient_boosting(target, data)    
     
 if __name__ == '__main__':
     tf.app.run()

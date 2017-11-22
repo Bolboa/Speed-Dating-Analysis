@@ -11,7 +11,7 @@ def preprocess_field(data):
 
     # Drop columns to make dataset smaller and more manageable.
     processed_data = processed_data.drop(series["undergra":"tuition"], axis=1)
-    processed_data = processed_data.drop(series["from":"career"], axis=1)
+    processed_data = processed_data.drop(series["from":"go_out"], axis=1)
     processed_data = processed_data.drop(series["sports":], axis=1)
     processed_data = processed_data.drop(series["wave":"positin1"], axis=1)
     processed_data = processed_data.drop(series["iid":"id"], axis=1)
@@ -19,15 +19,25 @@ def preprocess_field(data):
     processed_data = processed_data.drop(series["pid"], axis=1)
     processed_data = processed_data.drop(series["field"], axis=1)
 
-    # Drop rows that contain any NaN values.
-    processed_data = processed_data.dropna()
-
     return processed_data
 
 
 def preprocess_career_c(data):
 
     processed_data = data.copy()
+
+    # If column 'career_c' is empty in places where column 'career' is not,
+    # use column 'career' as the filler value.
+    processed_data['career_c'] = processed_data['career_c'].fillna(processed_data['career'])
+
+    # Convert columns to 1-dimensional Series array
+    series = processed_data.columns.to_series()
+
+    # Drop the 'career' column after it is used as a filler for column 'career_c'.
+    processed_data = processed_data.drop(series["career"], axis=1)
+
+    # Drop rows that contain any NaN values.
+    processed_data = processed_data.dropna()
 
     # Convert all values in column to string type if not already.
     # This will allow us to perform string operations on non-numeric values.
@@ -40,8 +50,14 @@ def preprocess_career_c(data):
     processed_data['career_c'] = processed_data['career_c'].str.replace(" ", "")
 
     # Convert string values to an integer equivalent if the string contains any keywords.
+    searchfor = ['LAW']
+    processed_data.loc[processed_data['career_c'].str.contains('|'.join(searchfor), na=False), 'career_c'] = 1
+
     searchfor = ['RESEARCH']
     processed_data.loc[processed_data['career_c'].str.contains('|'.join(searchfor), na=False), 'career_c'] = 2
+
+    searchfor = ['ECON']
+    processed_data.loc[processed_data['career_c'].str.contains('|'.join(searchfor), na=False), 'career_c'] = 7
 
     searchfor = ['HUMAN']
     processed_data.loc[processed_data['career_c'].str.contains('|'.join(searchfor), na=False), 'career_c'] = 9
