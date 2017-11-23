@@ -6,25 +6,6 @@ import sklearn.ensemble as ske
 from sklearn import datasets, svm, model_selection, tree, metrics, preprocessing
 
 
-def analyze_data(data):
-
-    # Count rows of data.
-    print(data.count())
-
-    # Display the mean age.
-    print(data["age"].mean())
-
-    # Display match rate based on the age of the participant and their gender.
-    match_rate_gender = data.groupby(['age', 'gender']).mean()
-
-    # Plot match rate based on age of particpant and their gender.
-    match_rate_gender['match'].plot.bar()
-    plt.show()
-
-    # Display the match rate when age of participant, age of partner, and gender are considered.
-    match_rate_age = data.groupby(['age', 'gender', 'age_o']).mean()
-    print(match_rate_age['match'])
-
 def decision_tree(target, data):
 
     # Drop the target label, which we save separately.
@@ -41,12 +22,13 @@ def decision_tree(target, data):
     clf_tree.fit(X_train, y_train)
 
     # Use the test data to calculate the score.
-    print(clf_tree.score(X_test, y_test))
+    print("Decision Tree Score (No Cross-validation):", clf_tree.score(X_test, y_test))
 
     # Implement the decision tree again using Cross Validation.
     unique_permutations_cross_val(X, y, clf_tree)
 
     return clf_tree
+
 
 def random_forest(target, data):
 
@@ -59,10 +41,12 @@ def random_forest(target, data):
     unique_permutations_cross_val(X, y, clf_tree)
 
     clf_tree.fit(X, y)
+    
     return clf_tree
 
 
 def gradient_boosting(target, data):
+
 
     # Drop the target label, which we save separately.
     X = data.drop([target], axis=1).values
@@ -71,6 +55,10 @@ def gradient_boosting(target, data):
     # Run Cross Validation on Gradient Boosting.
     clf_gradient = ske.GradientBoostingClassifier(n_estimators=50)
     unique_permutations_cross_val(X, y, clf_gradient)
+
+    clf_gradient.fit(X, y)
+    
+    return clf_gradient
 
 
 def unique_permutations_cross_val(X, y, model):
@@ -93,26 +81,41 @@ def main(_):
     # Set target column.
     target = "match"
 
+    # Extract all column headers.
     header_list = list(data.columns.values)
 
+    # Get the mean values for all columns and store them in a list.
     mean_values = [data[header].mean() for header in header_list]
 
+    # Map each column header to its respective mean.
     header_dict = dict(zip(header_list, mean_values))
 
+    # Remove the target header as this is not part of the dataset.
     del header_dict[target]
 
+    # Key = Column Header,
+    # Value = Mean of Column,
+    # Storing it in a dictionary makes it easier to change values so
+    # as to see how the prediction changes.
     header_dict['samerace'] = 1
     header_dict['imprace'] = 9
 
+    # Extract only the mean values after values have been changed.
     extract_values = list(header_dict.values())
-
-    #analyze_data(data)
-    #decision_tre = decision_tree(target, data)
-    rnd_forest = random_forest(target, data)
-
-    predictions = rnd_forest.predict([extract_values])
-    print(predictions)
-    #gradient_boosting(target, data)    
     
+    # Decision Tree
+    decision_tre = decision_tree(target, data)
+    
+    # Random Forest
+    rnd_forest = random_forest(target, data)
+    
+    # Gradient Boosting
+    grd_boost = gradient_boosting(target, data)    
+    
+    # Random Forest can predict the match rate if you give a value for every column.
+    # In this case the values represent the mean of every column.
+    predictions = rnd_forest.predict([extract_values])
+
+
 if __name__ == '__main__':
     tf.app.run()
