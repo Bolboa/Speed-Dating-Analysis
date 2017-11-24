@@ -17,6 +17,7 @@ def analyze_data(data):
 
     # Display match rate based on the age of the participant and their gender.
     match_rate_gender = data.groupby(['age', 'gender']).mean()
+    print(match_rate_gender['match'])
 
     # Plot match rate based on age of particpant and their gender.
     match_rate_gender['match'].plot.bar()
@@ -164,7 +165,7 @@ def redundant_features(target, data):
     X = data.drop([target], axis=1).values
     y = data[target].values
 
-    # Estimator for Recursive Feature Elimination (RFA).
+    # Estimator for Recursive Feature Elimination (RFE).
     model = LogisticRegression()
     
     # RFE will use Logistic Regression.

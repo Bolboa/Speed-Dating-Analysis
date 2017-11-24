@@ -47,7 +47,6 @@ def random_forest(target, data):
 
 def gradient_boosting(target, data):
 
-
     # Drop the target label, which we save separately.
     X = data.drop([target], axis=1).values
     y = data[target].values

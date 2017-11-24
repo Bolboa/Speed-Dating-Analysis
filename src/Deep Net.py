@@ -46,10 +46,11 @@ def DNN(target, data):
 
 
     init = tf.global_variables_initializer()
+    init_local = tf.local_variables_initializer()
 
     with tf.Session() as sess:
 
-    	sess.run(init)
+    	sess.run([init, init_local])
 
     	for epoch in range(FLAGS.training_epochs):
 
@@ -75,6 +76,10 @@ def DNN(target, data):
     	mse = tf.reduce_mean(tf.square(pred_y - Y_test))
 
     	print("MSE: %4f" % sess.run(mse))
+
+    	accuracy, accuracy_op = tf.metrics.accuracy(labels=tf.argmax(Y_test, 0), predictions=tf.argmax(pred, 0))
+
+    	print(sess.run(accuracy))
 
 
     	input_values = X_data[:10]
