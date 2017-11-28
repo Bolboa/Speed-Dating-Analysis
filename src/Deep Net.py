@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
 
 
 flags = tf.app.flags
@@ -20,89 +21,104 @@ def DNN(target, data):
     Y_data = np.array(data[target].values)
     Y_data = np.reshape(Y_data, (-1, 1))
 
+    # Split the data into testing sample and training sample at 80/20.
     X_train, X_test, Y_train, Y_test = train_test_split(
     	X_data, 
     	Y_data, 
     	test_size=0.2
     )
 
-    rng = np.random
-
+    # Number of rows.
     n_rows = X_train.shape[0]
 
-    X = tf.placeholder("float")
-    Y = tf.placeholder("float")
+    X = tf.placeholder(tf.float32, [None, 89])
+    Y = tf.placeholder(tf.float32, [None, 1])
 
+    # Tensor size is defined to calculate weight and bias.
+    W_shape = tf.TensorShape([89, 1])
+    b_shape = tf.TensorShape([1])
 
-    W = tf.Variable(rng.randn(), name="weight")
-    b = tf.Variable(rng.randn(), name="bias")
+    # Tensor size is used and random values are used to fill up the variables.
+    # It does not matter what values we start with since Linear Regression models
+    # will always end up at a global minimum through training.
+    W = tf.Variable(tf.random_normal(W_shape))
+    b = tf.Variable(tf.random_normal(b_shape))
 
-    pred = tf.add(tf.multiply(X, W), b)
+    # We use matmul because we are training on a multi-class dataset.
+    pred = tf.add(tf.matmul(X, W), b)
 
-    cost = tf.reduce_sum(tf.pow(pred-Y, 2)/(2*n_rows))
+    # Define the cost function.
+    cost = tf.reduce_sum(tf.pow(pred-Y, 2)/(2*n_rows-1))
 
+    # Minimize cost through gradient descent.
     optimizer = tf.train.GradientDescentOptimizer(FLAGS.learning_rate).minimize(cost)
 
-
-
+    # Initialize all global variables.
     init = tf.global_variables_initializer()
-    init_local = tf.local_variables_initializer()
-
+    
+    # Run session.
     with tf.Session() as sess:
 
-    	sess.run([init, init_local])
+    	sess.run(init)
 
     	for epoch in range(FLAGS.training_epochs):
 
-    		avg_cost = 0
-
+    		# Loop through the training sample.
     		for (x, y) in zip(X_train, Y_train):
 
+    			# Batch size is 1 since we loop through every single one iteratively.
+    			x = np.reshape(x, (1, 89))
+    			y = np.reshape(y, (1,1))
+
+    			# Run gradient descent to minimize cost.
     			sess.run(optimizer, feed_dict={X:x, Y:y})
 
-    		# display logs per epoch step
+    		# Display logs per epoch depending on the display step.
     		if (epoch + 1) % FLAGS.display_step == 0:
 
+    			# Calculate cost.
     			c = sess.run(
     				cost, 
     				feed_dict={X:X_train, Y:Y_train}
     			)
 
+    			# R-squared score checks how close the test data is
+    			# to the fitted line.
+    			Y_pred = sess.run(pred, feed_dict={X:X_test})
+    			test_error = r2_score(Y_test, Y_pred)
+    			print(test_error)
+
+    			# Print cost per epoch
     			print("Epoch:", '%04d' % (epoch + 1), "cost=", "{:.9f}".format(c))
 
     	print("Optimization Finished!")
 
-    	pred_y = sess.run(pred, feed_dict={X:X_test})
-    	mse = tf.reduce_mean(tf.square(pred_y - Y_test))
+    	# Get all predictions for the test sample.
+    	Y_pred = sess.run(pred, feed_dict={X:X_test})
+    	
+    	# Calculate how far off each prediction is from the target label,
+    	# we use the definition of Mean Squared Error to calculate this.
+    	mse = tf.reduce_mean(tf.square(Y_pred - Y_test))
+    	print("MSE (definition): %4f" % sess.run(mse))
 
-    	print("MSE: %4f" % sess.run(mse))
+    	# Cast test sample to float.
+    	Y_test = tf.cast(Y_test, tf.float32)
+    	
+    	# Use Tensorflow's definition of a Mean Squared Error.
+    	mse = tf.metrics.mean_squared_error(labels=Y_test, predictions=Y_pred)
 
-    	accuracy, accuracy_op = tf.metrics.accuracy(labels=tf.argmax(Y_test, 0), predictions=tf.argmax(pred, 0))
+    	# Intialize local variables to be used to calculate the Mean Square Error.
+    	init_local = tf.local_variables_initializer()
+    	sess.run(init_local)
 
-    	print(sess.run(accuracy))
+    	# Calculate the Mean Square Error.
+    	mse = sess.run(mse)
+    	print("MSE: %4f" % mse[1])
 
-
-    	input_values = X_data[:10]
-    	target_values = Y_data[:10]
-    	prediction_values = input_values * sess.run(W) + sess.run(b)
-
-    	plt.plot(input_values, target_values, 'ro', label='main')
-    	plt.plot(input_values, prediction_values, label='Predicted')
-
+    	# Display how the fitted lines changes as more data is trained on.
+    	plt.plot(X_train, Y_train, 'ro', label='main')
+    	plt.plot(X_train, X_train*sess.run(W).T, label='Predicted')
     	plt.show()
-
-    	# training_cost = sess.run(cost, feed_dict={X:X_train, Y:Y_train})
-    	# print("Training cost=", training_cost, "W=", sess.run(W), "b=", sess.run(b), '\n')
-
-    	# testing_cost = sess.run(
-    	# 	tf.reduce_sum(tf.pow(pred-Y, 2)) / (2*X_test.shape[0]),
-    	# 	feed_dict={X:X_test, Y:Y_test}
-    	# )
-
-    	# print("Testing cost=", testing_cost)
-    	# print("Absolute mean square loss difference:", abs(
-    	# 	training_cost - testing_cost
-    	# ))
 
 
 def main(_):

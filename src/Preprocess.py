@@ -29,7 +29,7 @@ def analyze_data(data):
 
 
 def preprocess_field(data):
-
+    
     processed_data = data.copy()
 
     # Drop any columns that are all NaN
