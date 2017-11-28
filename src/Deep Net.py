@@ -126,8 +126,10 @@ def main(_):
 	# Read dataframe.
     data = pd.read_pickle('dating')
 
+    # Target column
     target = 'match'
 
+    # Linear Regression model.
     DNN(target, data)
 
     
