@@ -13,13 +13,14 @@ def analyze_data(data):
     print(data.count())
 
     # Display the mean age.
-    print(data["age"].mean())
+    print("Mean Age:", data["age"].mean())
 
     # Display match rate based on the age of the participant and their gender.
     match_rate_gender = data.groupby(['age', 'gender']).mean()
     print(match_rate_gender['match'])
 
     # Plot match rate based on age of particpant and their gender.
+    plt.figure(figsize=(15, 15))
     match_rate_gender['match'].plot.bar()
     plt.show()
 
@@ -29,16 +30,13 @@ def analyze_data(data):
 
 
 def preprocess_field(data):
-    
-    processed_data = data.copy()
 
-    # Drop any columns that are all NaN
-    processed_data = processed_data.dropna(axis=1, how='all')
+    processed_data = data.copy()
 
     # Drop any columns if 23% or more of its values are NaN.
     processed_data = processed_data.dropna(thresh=len(processed_data)*0.77, axis=1)
 
-    # Convert columns to 1-dimensional Series array
+    # Convert columns to 1-dimensional Series array.
     series = processed_data.columns.to_series()
 
     # Drop columns to make dataset smaller and more manageable.
@@ -51,7 +49,6 @@ def preprocess_field(data):
     processed_data = processed_data.drop(series["fun_o"], axis=1)
     processed_data = processed_data.drop(series["shar_o"], axis=1)
     processed_data = processed_data.drop(series["imprelig"], axis=1)
-    processed_data = processed_data.drop(series["sports"], axis=1)
     processed_data = processed_data.drop(series["prob"], axis=1)
     processed_data = processed_data.drop(series["match_es"], axis=1)
     processed_data = processed_data.drop(series["satis_2"], axis=1)
@@ -108,6 +105,31 @@ def preprocess_career_c(data):
     return data
 
 
+def preprocess_sports(data):
+
+    # Convert all values in column to string type if not already.
+    # This will allow us to perform string operations on non-numeric values.
+    data['sports'] = data['sports'].astype(str)
+
+    # Convert column to all caps so all the data will have the same format.
+    data['sports'] = data['sports'].str.upper()
+
+    # Remove all spaces between strings in each column.
+    data['sports'] = data['sports'].str.replace(" ", "")
+
+    # Convert string values to NaN if the string contains any keywords.
+    searchfor = ['TEACH']
+    data.loc[data['sports'].str.contains('|'.join(searchfor), na=False), 'sports'] = np.NaN
+
+    # Convert the column back to floating point format.
+    data['sports'] = data['sports'].astype(float)
+
+    # Replace the NaN values that we added with the mean of the column.
+    data['sports'] = data['sports'].fillna(data['sports'].mean())
+    
+    return data
+
+
 def preprocess_from(data):
 
     # Change all NaN values to an integer.
@@ -144,7 +166,7 @@ def preprocess_zipcode(data):
 
 def encode_data(target, data):
 
-    # Label Encoder
+    # Label Encoder.
     le = LabelEncoder()
 
     # Convert column to all caps so all the data will have the same format.
@@ -199,6 +221,8 @@ def main(_):
     
     # Preprocess and remove redundant columns.
     processed_data = preprocess_field(data)
+
+    processed_data = preprocess_sports(processed_data)
 
     # Preprocess the encoded career column.
     processed_data = preprocess_career_c(processed_data)
