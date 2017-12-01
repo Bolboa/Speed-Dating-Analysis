@@ -16,7 +16,12 @@ def decision_tree(target, data):
     X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size=0.2)
 
     # Initialize a decison tree with a max_depth of 10.
-    clf_tree = tree.DecisionTreeClassifier(max_depth=10)
+    clf_tree = tree.DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=10,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, presort=False, random_state=None,
+            splitter='best')
 
     # Fit the model with the training data.
     clf_tree.fit(X_train, y_train)
@@ -36,8 +41,16 @@ def random_forest(target, data):
     X = data.drop([target], axis=1).values
     y = data[target].values
 
-    # Run Cross Validation on Random Forest Classifier.
-    clf_tree = ske.RandomForestClassifier(n_estimators=50)
+    # Random Forest Classifier.
+    clf_tree = ske.RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
+            max_depth=None, max_features='auto', max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, n_estimators=50, n_jobs=1,
+            oob_score=False, random_state=None, verbose=0,
+            warm_start=False)
+
+    # Implement the decision tree again using Cross Validation.
     unique_permutations_cross_val(X, y, clf_tree)
 
     clf_tree.fit(X, y)
@@ -51,8 +64,17 @@ def gradient_boosting(target, data):
     X = data.drop([target], axis=1).values
     y = data[target].values
 
-    # Run Cross Validation on Gradient Boosting.
-    clf_gradient = ske.GradientBoostingClassifier(n_estimators=50)
+    # Gradient Boosting.
+    clf_gradient = ske.GradientBoostingClassifier(criterion='friedman_mse', init=None,
+              learning_rate=0.1, loss='deviance', max_depth=3,
+              max_features=None, max_leaf_nodes=None,
+              min_impurity_decrease=0.0, min_impurity_split=None,
+              min_samples_leaf=1, min_samples_split=2,
+              min_weight_fraction_leaf=0.0, n_estimators=50,
+              presort='auto', random_state=None, subsample=1.0, verbose=0,
+              warm_start=False)
+
+    # Implement the decision tree again using Cross Validation.
     unique_permutations_cross_val(X, y, clf_gradient)
 
     clf_gradient.fit(X, y)
@@ -96,14 +118,17 @@ def main(_):
     # Value = Mean of Column,
     # Storing it in a dictionary makes it easier to change values so
     # as to see how the prediction changes.
-    header_dict['samerace'] = 1
-    header_dict['imprace'] = 9
+    header_dict['exercise'] = 10
+    header_dict['age'] = 23
+    header_dict['movies'] = 10
+    header_dict['reading'] = 10
+    header_dict['music'] = 10
 
     # Extract only the mean values after values have been changed.
     extract_values = list(header_dict.values())
     
     # Decision Tree
-    decision_tre = decision_tree(target, data)
+    decision_tree = decision_tree(target, data)
     
     # Random Forest
     rnd_forest = random_forest(target, data)
@@ -114,6 +139,7 @@ def main(_):
     # Random Forest can predict the match rate if you give a value for every column.
     # In this case the values represent the mean of every column.
     predictions = rnd_forest.predict([extract_values])
+    print(predictions)
 
 
 if __name__ == '__main__':
