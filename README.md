@@ -18,6 +18,8 @@ Very little information is given concerning the data set, all we know is what ea
 
   * From the graph, it appears that I am correct thus far. *1* represents male and *0* represents female. It seems that 19 and 20 year old women have a higher match rate than their male counterparts. I took this idea one step further and decided to factor in the age of the participant's partner as well.
   
+  <div style="margin-left:auto;">
   ![Alt text](/img/age_o.png)
+ <div>
   
   * In the output above, we can see that young women tend to prefer older men. For example, at the age of 19, if a woman's partner is 20, 21, or 22, the match rate is much higher than for men. In fact, for 19 year old men, the match rate is 0. This match rate seems to hold true for the years below the age of 26.
