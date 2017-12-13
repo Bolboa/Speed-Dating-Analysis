@@ -14,4 +14,6 @@ Very little information is given concerning the data set, all we know is what ea
 * **Step 2 - Clustering Model**
   * It is pretty obvious from looking at the data that some columns must be redundant, whereas other ones must be strongly correlated to the target column we are trying to predict. I decided to look at some of the columns I believe to be strongly correlated to the target column to prove that this was true. I decided to graph the match rate of each participant in relation to their age and gender. I theorized that the youngest of females had higher match rates than the yougest of males, since women generally are more accepting to dating someone older than them.
   
-  ![Alt text](/img/data.jpg)
+  ![Alt text](/img/data.png)
+
+Fromt the graph, it appears that I am so far correct. 19 and 20 year old women have a higher match rate than their male counterparts. I took this idea one step further and decided to factor in the age of the participant's partner.
