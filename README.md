@@ -23,3 +23,10 @@ Very little information is given concerning the data set, all we know is what ea
   </p>
   
   * In the output above, we can see that young women tend to prefer older men. For example, at the age of 19, if a woman's partner is 20, 21, or 22, the match rate is much higher than for men. In fact, for 19 year old men, the match rate is 0. This match rate seems to hold true for the years below the age of 26.
+
+ * I used the RFE with a Logistic Regression model. The Logistic Regression assigns weights to every feature, then the recursion cuts out some features with the largest weights and then trains again. In my case this repeats until it is left with 3 features which have the highest weights and lowest cost. In essence, the RFE will tell you which 3 features are most important, but it will also give weights to every other feature in the dataset that tells you how correlated each feature is to the target column.
+ 
+ <p style=align="center">
+   <img src="/img/RFE.png"/>
+  </p>
+ 
