@@ -16,4 +16,4 @@ Very little information is given concerning the data set, all we know is what ea
   
   ![Alt text](/img/data_graph.png)
 
-  Fromt the graph, it appears that I am so far correct. 19 and 20 year old women have a higher match rate than their male counterparts. I took this idea one step further and decided to factor in the age of the participant's partner.
+  * From the graph, it appears that I am correct thus far. *1* represents male and *0* represents femal. It seems that 19 and 20 year old women have a higher match rate than their male counterparts. I took this idea one step further and decided to factor in the age of the participant's partner as well.
