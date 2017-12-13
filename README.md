@@ -12,4 +12,6 @@ Very little information is given concerning the data set, all we know is what ea
   * There were two columns, *career* and *career_c*, the former contains strings and the latter represents each string's numerical equivalent. Clearly, *career* is redundant, however, *career_c* contained some values that were empty but that were not empty at the same position in the *career* column. I encoded these strings by filtering by certain keywords and grouping the careers that belong in the same category together. After encoding these strings, the empty values were replaced with the necessary encoding.
 
 * **Step 2 - Clustering Model**
-  * It is pretty obvious from looking at the data that some columns must be redundant, whereas other ones must be strongly correlated to the target column we are trying to predict. I decided to look at some of the columns I believe to be strongly correlated to the target column to prove that this was true.
+  * It is pretty obvious from looking at the data that some columns must be redundant, whereas other ones must be strongly correlated to the target column we are trying to predict. I decided to look at some of the columns I believe to be strongly correlated to the target column to prove that this was true. I decided to graph the match rate of each participant in relation to their age and gender. I theorized that the youngest of females had higher match rates than the yougest of males, since women generally are more accepting to dating someone older than them.
+  
+  ![Alt text](/img/data.jpg)
