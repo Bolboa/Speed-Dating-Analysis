@@ -26,6 +26,6 @@ Very little information is given concerning the data set, all we know is what ea
   * I used the RFE with a Logistic Regression model. The Logistic Regression assigns weights to every feature, then the recursion cuts out some features with the largest weights and then trains again. In my case this repeats until it is left with 3 features which have the highest weights and lowest cost. In essence, the RFE will tell you which 3 features are most important, but it will also give weights to every other feature in the dataset that tells you how correlated each feature is to the target column.
  
   <p align="center">
-   <img src="/img/RFE.png"/>
+   <img src="/img/RFE_model.png"/>
   </p>
  
