@@ -28,4 +28,11 @@ Very little information is given concerning the data set, all we know is what ea
   <p align="center">
    <img src="/img/RFE_model.png"/>
   </p>
+  
+  
+   * The threshold for my *RFE* was anything greater than or equal to *88* was removed. The column names assigned a weight of 88 or greater are demonstrated below.
+   
+   <p align="center">
+   <img src="/img/RFEres.png"/>
+  </p>
  
