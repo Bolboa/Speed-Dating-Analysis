@@ -40,5 +40,10 @@ Very little information is given concerning the data set, all we know is what ea
   ## Models
   
   * **Decision Tree**
+   * The first model implemented was a simple Decision Tree (No Cross-Validation). Decision trees work well enough for classification problems. They work by using conditionals:
+   
+   <p align="center">
+   <img src="/img/d_tree.png"/>
+  </p>
  
  
