@@ -39,7 +39,7 @@ Very little information is given concerning the data set, all we know is what ea
   
   ## Models
   
-  # Decision Tree
+  ### Decision Tree
    * The first model implemented was a simple Decision Tree (No Cross-Validation). Decision trees work well enough for classification problems. They work by using conditionals:
    
    <p align="center">
@@ -54,5 +54,7 @@ Very little information is given concerning the data set, all we know is what ea
  <p align="center">
    <img src="/img/entropy.png"/>
   </p>
+ 
+ * The accuracy of the decision tree ended up being *100%*, which is obviously wrong. There is no way that a decision tree could get such a high accuracy, especially since we limited the max-depth to *10* which is smaller than the number of attributes used. I suspected one of the columns was acting as a predictor, so I removed each column one by one and eventually found it, the attribute *dec* was the predictor. After retraining, the final model accuracy was **90.93%**.
  
  
