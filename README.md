@@ -49,12 +49,11 @@ Very little information is given concerning the data set, all we know is what ea
   * In the diagram, the values for gender are *0* and *1*, so the split will be on *0.5*. With the other two attributes, the valuse range from *0* to *10*, so the split will be on *5*. Note that for nominal values, scikit-learn's decision tree will split on one value. On the left will go instances of one category, on the right will go the rest of the categories.
   
   * Entropy is calculated to decide which attributes to split on. The decision tree will try all the attributes and choose the attribute that results in the most **information gain**. This is calculated by calculating the entropy of the target on its own, and then substracted by the entropy of the target in relation to another attribute. The highest information gain is chosen as the splitting node. This is done for all branches.
- 
- 
- <p align="center">
+   <p align="center">
    <img src="/img/entropy.png"/>
   </p>
  
+  
   * The accuracy of the decision tree ended up being *100%*, which is obviously wrong. There is no way that a decision tree could get such a high accuracy, especially since we limited the max-depth to *10* which is smaller than the number of attributes used. I suspected one of the columns was acting as a predictor, so I removed each column one by one and eventually found it, the attribute *dec* was the predictor. After retraining, the final model accuracy was **90.93%**.
  
  
